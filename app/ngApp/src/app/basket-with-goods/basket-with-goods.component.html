@@ -1,0 +1,47 @@
+<div class="nuxt-container__content">
+  <main class="basket">
+    <h1 class="cart__title">Корзина <span>(<span class="plural-count">1 позиция</span>)</span>
+    </h1>
+    <section class="wrap_prodholder_and_asidebar">
+
+      <!--                               Описание товара в корзине  -->
+      <section class="wrap_all_section_product">
+      <app-goods-in-the-basket
+        *ngFor="let prod of user"
+        [merchandiseBasket]="prod">
+      </app-goods-in-the-basket>
+      </section>
+
+      <!--                              Конец Описание товара в корзине  -->
+
+
+      <!--                              Сидебар -->
+      <aside class="page-sidebar-basket">
+
+        <section class="sidebar__item">
+          <ul class="pricing">
+            <li class="pricing__item pricing__item--total-price"><span class="pricing__name">Итого (без доставки)</span><span class="pricing__sum"><span class="app-price">628&nbsp;₽</span></span>
+            </li>
+            <li class="pricing__item pricing__item--total-weight"><span class="pricing__name">Общий вес</span><span class="pricing__sum"><span class="app-weight">31,97&nbsp;кг</span></span>
+            </li>
+          </ul>
+        </section>
+
+        <section class="call ">
+          <form [formGroup]="">
+            <fieldset class="field">
+              <div class="input">
+
+                <input type="text" placeholder="Ваш номер" title="Ваш номер" class="input-input">
+              </div>
+              <button type="submit" class="button call-btn">Оформить заказ</button>
+
+            </fieldset>
+          </form>
+          <p class="change-text call-text">Оперативно перезвоним, в течении&nbsp;15 мин.</p>
+        </section>
+      </aside>
+    </section>
+  </main>
+</div>
+

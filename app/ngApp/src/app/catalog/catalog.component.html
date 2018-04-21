@@ -1,0 +1,14 @@
+<section class="row">
+
+  <h3 class="row-subtitle">Каталог товаров</h3>
+  <div class="row-product">
+
+    <!--                               Описание товара   -->
+    <app-product-groups
+      *ngFor="let prod of products"
+      [merchandise]="prod"
+    ></app-product-groups>
+
+
+  </div>
+</section>
