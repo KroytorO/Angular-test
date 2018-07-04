@@ -141,6 +141,10 @@ body{
   color: #fff;
 }
 
+.link:hover {
+  text-decoration: none;
+  color: #fff;
+}
 
 .button {
   cursor: pointer;

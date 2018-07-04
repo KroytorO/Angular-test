@@ -1,91 +1,78 @@
 import { Component, OnInit } from '@angular/core';
 import {FormControl, FormGroup, Validators} from "@angular/forms";
+import {UserService} from "../shared/services/users.service";
+import {Router} from "@angular/router";
+import {CookieService} from "ngx-cookie-service";
+import {Message} from "../shared/models/message.models";
 
 @Component({
   selector: 'app-login-form',
   templateUrl: './login-form.component.html',
-  styleUrls: ['./login-form.component.css']
+  styleUrls: ['./login-form.component.css'],
+  providers:[UserService]
 })
 export class LoginFormComponent implements OnInit {
+  cookieValue = 'default';
 
-  // constructor() { }
-
-  // charsCount=5;
   /**Создаем переменую form и определяем её тип*/
   login_form: FormGroup;
+message: Message;
+  constructor(private userService:UserService,
+              private router:Router,
+              private cookieService: CookieService) {
+  }
   /**Инцилизируем форму, т.е.указать как она связанна с шаблоном, какие поля есть в ней*/
   ngOnInit() {
+    this.message = new Message('danger', '');
     /**Создаем форму*/
     this.login_form = new FormGroup({
 
-      email: new FormControl('', [Validators.required, Validators.email], this.checkForEmail),/**добавляем асинхронный валидатор checkForEmail отдельно*/
-      pass: new FormControl('', [Validators.required],this.checkForPassword)
+      login_email: new FormControl('', [Validators.required, Validators.email, Validators.pattern(/^[A-z0-9@.]*$/)]),/**добавляем асинхронный валидатор checkForEmail отдельно*/
+      login_pass: new FormControl('', [Validators.required, Validators.minLength(5)])
       /**передаем наш валидатор this.checkForLength, добавляем this,поскольку данный метод присущ классу  LoginFormComponent */
 
     });
   }
-
-
+//
+  private showMessage(text: string, type: string = 'danger') {
+    this.message = new Message(type, text);
+    //Установим setTimeout чтобы информация об ошибки не висела постоянно
+    window.setTimeout(() => {
+      this.message.text = '';
+    }, 5000);
+  }
 
   /**Обработчик события при нажатии на кнопку submit.
    *  Инцилизируем в шаблоне с помощью события (ngSubmit)="onSubmit()", передаем нашу функцию обработчик*/
   onSubmit() {
-    console.log('Submited!', this.login_form);
+    const formData = this.login_form.value;
+
+    /**post */
+    this.userService.postUserDataByLogin(formData).subscribe((response)=>{
+      //console.log(response);
+      /**Проверка возвращаемого статуса*/
+      if(response.error){
+        // console.log('ОШИБКА ');
+        this.showMessage('Не корректно указан логин или пароль');
+      }
+
+      /**Реддирект на страницу регистрации. Не забываем импортировать модуль Router и добавить в конструктор,т.е.  private router:Router*/
+      else if(response.status)
+      {
+
+        //Задаём  пользователю куку,если он есть
+        this.cookieService.set('data',JSON.stringify(response.data));
+        // this.cookieValue = this.cookieService.get('data');
+        //ЛОГИКА В СЛУЧАЕ ЕСЛИ АДМИН ИЛИ ПОЛЬЗОВАТЕЛЬ
+
+          this.router.navigateByUrl('/app/customer_panel');
+
+
+      }
+     // console.log('i formdata login'+' '+  formData.status);
+    })
+
   }
 
-  /**Создание собственного валидатора*/
-  /**метод checkForLength, принимает в себя некоторый контрол,который является типом FormControl*/
-  /**метод checkForLength, должен возвращать либо ничего либо объект
-   //{'errorCode':true}
-   //null undefined
-   */
-  // checkForLength(control: FormControl) {
-  //   /**control.value.length -обращаемся к значению контрола, к текущей длине значению, которое находится в input*/
-  //   if (control.value.length <=this.charsCount) {
-  //     return {
-  //       'lengthError': true
-  //     };
-  //   }
-  //   return null;
-  // }
-
-  /**THE END Создание собственного валидатора*/
-
-
-  /**Создаем асинхронный валидатор для проверки email*/
-  /**Метод возвращает промисс*/
-  checkForEmail(control: FormControl): Promise<any> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (control.value === 'test@mail.ru') {
-          resolve({
-            'emailIsUsed': true /**ключ emailIsUsed является кодом ошибки*/
-          });
-        } else {
-          resolve(null);/**ничего не возвращаем если ошибки нет*/
-        }
-      }, 3000);
-    });
-  }
-
-  /**The end Создаем асинхронный валидатор для проверки email*/
-
-  /**Создаем асинхронный валидатор для пароля*/
-  /**Метод возвращает промисс*/
-  checkForPassword(control: FormControl): Promise<any> {
-    return new Promise((resolve, reject) => {
-      setTimeout(() => {
-        if (control.value === '123456') {
-          resolve({
-            'PasswordIsUse': true /**ключ PasswordIsUse является кодом ошибки*/
-          });
-        } else {
-          resolve(null);/**ничего не возвращаем если ошибки нет*/
-        }
-      }, 2000);
-    });
-  }
-
-  /**The end Создаем асинхронный валидатор для пароля*/
 
 }

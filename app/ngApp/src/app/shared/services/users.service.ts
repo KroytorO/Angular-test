@@ -4,7 +4,7 @@
 import {Injectable} from "@angular/core";
 import {HttpClient} from "@angular/common/http";
 import {environment} from "../../../environments/environment";
-import {User} from "../models/user.model";
+
 import {Observable} from "rxjs/Observable";
 
 
@@ -12,8 +12,15 @@ import {Observable} from "rxjs/Observable";
   export class UserService{
   private serverApi = environment.apiUrl;
     constructor(private http: HttpClient){}
-//Метод возвращает Observable<User>, по типу User
-    getUserByEmail(email:string):Observable<User>{
-      return this.http.get<User>(`${this.serverApi}/api/json/getUserByEmail?email=${email}`)
-    }
+
+  // Метод post для формы логин
+  postUserDataByLogin(formData):Observable<any>{
+    return this.http.post<any>(`${this.serverApi}/api/json/postUserDataByLogin`,formData)
+  }
+
+  // Метод post для формы регистрации
+  postUserDataByRegistration(formDataReg):Observable<any>{
+    return this.http.post<any>(`${this.serverApi}/api/json/postUserDataByRegistration`,formDataReg)
+  }
+
   }

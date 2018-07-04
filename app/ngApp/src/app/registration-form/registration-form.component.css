@@ -127,3 +127,18 @@
 .flip.flipped {
   -webkit-transform: rotateY(-180deg);
 }
+
+/*Cтили ошибок*/
+.form-group.has-error .form-help-text {
+  color: #fb494d;
+  font-size: 13px
+}
+
+.alert.alert-danger {
+  background-color: #f44;
+  border: 1px solid #f44;
+  color: #fff;
+  text-align:center;
+  border-radius:3px;
+  font-size: 0.8rem;
+}
